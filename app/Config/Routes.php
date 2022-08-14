@@ -39,6 +39,7 @@ $routes->get('/', 'Home::index');
 $routes->get('/student', 'Student::index');
 $routes->post('ajax-student/store', 'Student::store');
 $routes->get('ajax-student/getdata', 'Student::fetch');
+$routes->post('ajax-student/viewstudent', 'Student::view');
 
 /*
  * --------------------------------------------------------------------

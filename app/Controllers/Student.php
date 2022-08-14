@@ -29,4 +29,11 @@ class Student extends BaseController
       $data['students'] = $students->findAll();
       return $this->response->setJSON($data);
     }
+    public function view()
+    {
+      $students = new Studentmodels();
+      $student_id = $this->request->getPost('stud_id');
+      $data['students'] = $students->find($student_id);
+      return $this->response->setJSON($data);
+    }
 }

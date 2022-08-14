@@ -38,6 +38,28 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="studentViewModal" tabindex="-1" aria-labelledby="studenModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add Student</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h4 class="id_view"></h4>
+          <h4 class="name_view"></h4>
+          <h4 class="phone_view"></h4>
+          <h4 class="course_view"></h4>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary ajaxstudent-save">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="container">
     <div class="row">
       <div class="col-md 12 my-4">
@@ -58,6 +80,7 @@
                   <th>Email</th>
                   <th>Phone</th>
                   <th>Course</th>
+                  <th>Created</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -75,7 +98,29 @@
 <?= $this->section('script') ?>
 <script>
   $(document).ready(function(){
-    loadstudent()
+    loadstudent();
+
+    $(document).on('click', '.view_btn', function() {
+      var stud_id = $(this).closest('tr').find('.stud_id').text();
+
+      $.ajax({
+        method: "POST",
+        url: "ajax-student/viewstudent",
+        data:{
+          'stud_id':stud_id
+        },
+        success: function(response){
+          $.each(response, function(key, studview){
+            console.log(studview['name'])
+            $('.id_view').text(studview['id'])
+            $('.name_view').text(studview['name'])
+            $('.phone_view').text(studview['phone'])
+            $('.course_view').text(studview['course'])
+              $('#studentViewModal').modal('show');
+          });
+        }
+      });
+    });
   });
   function loadstudent(){
     $.ajax({
@@ -89,10 +134,11 @@
               <td>'+value['email']+'</td>\
               <td>'+value['phone']+'</td>\
               <td>'+value['course']+'</td>\
+              <td>'+value['created_at']+'</td>\
               <td>\
-                <a class="btn btn-primary" >View</a>\
-                <a class="btn btn-info" >Update</a>\
-                <a class="btn btn-danger" >Delete</a>\
+                <a href="#" class="btn btn-primary view_btn" >View</a>\
+                <a href="#" class="btn btn-info edit_btn" >Edit</a>\
+                <a href="#" class="btn btn-danger delete_btn" >Delete</a>\
               </td>\
             </tr>'
           );
@@ -156,7 +202,8 @@
           success: function(response){
             $('#studentModal').modal('hide');
             $('#studentModal').find('input').val('');
-            console.log(response.status)
+            $('.studentdata').html("");
+            loadstudent();
           },
           error: function(request){
              console.log(request.responseText);
